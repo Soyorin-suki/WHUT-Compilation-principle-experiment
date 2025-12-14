@@ -1,0 +1,23 @@
+词法分析结果为：
+
+分析成功
+<kw_int, int>
+<Identifier, main>
+<LParen, (>
+<kw_void, void>
+<RParen, )>
+<LBrace, {>
+<kw_int, int>
+<Identifier, x>
+<Semicolon, ;>
+<kw_double, double>
+<Identifier, db>
+<Semicolon, ;>
+<Identifier, cout>
+<LeftShift, <<>
+<StringLiterial, "Hello world">
+<Semicolon, ;>
+<kw_return, return>
+<IntLiterial, 0>
+<Semicolon, ;>
+<RBrace, }>
