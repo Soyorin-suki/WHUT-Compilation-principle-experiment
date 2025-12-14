@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include <unordered_map>
+#include "TokenType.hpp"
 #include "Token.hpp"
 
 class Lexer{

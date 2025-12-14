@@ -1,17 +1,16 @@
 #include "Preprocessor.hpp"
 
 void Preprocessor::readTextFromIOManager(const IOManager&ioManager){
-	text=ioManager.readFromCmd();
+	text=ioManager.read();
 };
 
-void Preprocessor::readTextFromFile(const IOManager &ioManager, const std::string &path){
-    text = ioManager.readFromFile(path);
-}
+
 
 void Preprocessor::doPreprocess(){
 	std::string newText;
 	for(int i=0;i<text.length();i++){
 		if(text[i]=='\t')text[i]=' ';
+		if(text[i]=='\r')continue;
 		// else if(text[i]=='\n')text[i]=' ';
 		// if(text[i]==' '){
 		// 	if(i==0||text[i-1]==' '){

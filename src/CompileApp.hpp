@@ -4,7 +4,7 @@
 #include "Preprocessor.hpp"
 #include "AnalysisResult.hpp"
 
-class LexicalAnalyzerApp{
+class CompileApp{
 	private:
 	IOManager ioManager;
 	Lexer lexer;
@@ -15,5 +15,6 @@ class LexicalAnalyzerApp{
 	void manu();
 	void start();
 	void run();
+	void runWithFiles(const std::string &inPath, const std::string &outPath);
 
 };
