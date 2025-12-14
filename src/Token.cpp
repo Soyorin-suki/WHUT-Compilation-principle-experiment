@@ -1,10 +1,10 @@
 #include "Token.hpp"
 
 
-Token::Token(TokenType tokenType,int line,int colomn,std::string lexeme):
+Token::Token(TokenType tokenType,int line,int column,std::string lexeme):
 			type(tokenType),
 			line(line),
-			colomn(colomn),
+			column(column),
 			lexeme(lexeme){}
 
 
@@ -106,6 +106,10 @@ std::ostream& operator<<(std::ostream& os,const Token& token){
 			os<<"SlashEq";break;
 		case TokenType::PercentEq:
 			os<<"PercentEq";break;
+		case TokenType::LeftShift:
+			os<<"LeftShift";break;
+		case TokenType::RightShift:
+			os<<"RightShift";break;
 	}
 	os<<", "<<token.lexeme<<">";
 	return os;

@@ -4,6 +4,10 @@ void Preprocessor::readTextFromIOManager(const IOManager&ioManager){
 	text=ioManager.readFromCmd();
 };
 
+void Preprocessor::readTextFromFile(const IOManager &ioManager, const std::string &path){
+    text = ioManager.readFromFile(path);
+}
+
 void Preprocessor::doPreprocess(){
 	std::string newText;
 	for(int i=0;i<text.length();i++){

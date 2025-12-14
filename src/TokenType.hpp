@@ -53,6 +53,9 @@ enum class TokenType{
 	SlashEq,		// /=
 	PercentEq,		// %=
 
+	LeftShift,		// <<
+	RightShift,		// >>
+
 	Eof				// EOF
 
 };

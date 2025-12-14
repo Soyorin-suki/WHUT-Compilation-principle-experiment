@@ -7,4 +7,5 @@ private:
 
 public:
 	std::string readFromCmd()const;
+	std::string readFromFile(const std::string &path) const;
 };

@@ -7,7 +7,7 @@ std::vector<Token> Lexer::getTokens()const{
 
 Lexer::Lexer(){
 	tokens.clear();
-	nowLine=nowColomn=1;
+	nowLine=nowColumn=1;
 	nowPos=0;
 	keywords.clear();
 	keywords["void"]=TokenType::kw_void;
@@ -51,13 +51,15 @@ Lexer::Lexer(){
 	opts["/"]=TokenType::Slash;
 	opts["="]=TokenType::Assign;
 	opts["%"]=TokenType::Percent;
+	opts["<<"]=TokenType::LeftShift;
+	opts[">>"]=TokenType::RightShift;
 	
 }
 
 void Lexer::setText(std::string text){
 	this->text=text;
 	tokens.clear();
-	nowLine=nowColomn=1;
+	nowLine=nowColumn=1;
 	nowPos=0;
 }
 
@@ -71,8 +73,8 @@ char Lexer::get(){
 	char ch=peak();
 	if(ch=='\n'){
 		nowLine++;
-		nowColomn=1;
-	}else nowColomn++;
+		nowColumn=1;
+	}else nowColumn++;
 	nowPos++;
 	return ch;
 }
@@ -139,9 +141,9 @@ Token Lexer::scanNumber(){
 		}
 		tmpPos++;
 	}
-	if(nowSituation==2||nowSituation==1)return Token(TokenType::IntLiterial,nowLine,nowColomn,tmpText);
-	else if(nowSituation==4||nowSituation==3)return Token(TokenType::DoubleLiterial,nowLine,nowColomn,tmpText);
-	else return Token(TokenType::Unknown,nowLine,nowColomn,tmpText);
+	if(nowSituation==2||nowSituation==1)return Token(TokenType::IntLiterial,nowLine,nowColumn,tmpText);
+	else if(nowSituation==4||nowSituation==3)return Token(TokenType::DoubleLiterial,nowLine,nowColumn,tmpText);
+	else return Token(TokenType::Unknown,nowLine,nowColumn,tmpText);
 }
 
 Token Lexer::scanString(){
@@ -157,7 +159,7 @@ Token Lexer::scanString(){
 			if(nowCh=='\"'){
 				tmpText+=nowCh;
 				nowSituation=1;
-			}else return Token(TokenType::Unknown,nowLine,nowColomn,tmpText);
+			}else return Token(TokenType::Unknown,nowLine,nowColumn,tmpText);
 		}
 		else if(nowSituation==1){
 			if(nowCh=='\"'){
@@ -177,9 +179,9 @@ Token Lexer::scanString(){
 		tmpPos++;
 	}
 	if(nowSituation==3){
-		return Token(TokenType::StringLiterial,nowLine,nowColomn,tmpText);
+		return Token(TokenType::StringLiterial,nowLine,nowColumn,tmpText);
 	}else{
-		return Token(TokenType::Unknown,nowLine,nowColomn,tmpText);
+		return Token(TokenType::Unknown,nowLine,nowColumn,tmpText);
 	}
 }
 
@@ -214,8 +216,8 @@ Token Lexer::scanChar(){
 		tmpPos++;
 	}
 	if(nowSituation==4){
-		return Token(TokenType::CharLiterial,nowLine,nowColomn,tmpText);
-	}else return Token(TokenType::Unknown,nowLine,nowColomn,tmpText);
+		return Token(TokenType::CharLiterial,nowLine,nowColumn,tmpText);
+	}else return Token(TokenType::Unknown,nowLine,nowColumn,tmpText);
 }
 
 Token Lexer::scanIdentifier(){
@@ -238,10 +240,10 @@ Token Lexer::scanIdentifier(){
 		tmpPos++;
 	}
 	if(nowSituasion==1){
-		if(keywords.count(tmpText))return Token(keywords[tmpText],nowLine,nowColomn,tmpText);
-		else return Token(TokenType::Identifier,nowLine,nowColomn,tmpText);
+		if(keywords.count(tmpText))return Token(keywords[tmpText],nowLine,nowColumn,tmpText);
+		else return Token(TokenType::Identifier,nowLine,nowColumn,tmpText);
 	}else {
-		return Token(TokenType::Unknown,nowLine,nowColomn,tmpText);
+		return Token(TokenType::Unknown,nowLine,nowColumn,tmpText);
 	}
 }
 
@@ -251,12 +253,12 @@ Token Lexer::scanOperatorOrPunct(){
 	if(!endChar(0))tmpText+=peak(0);
 	if(!endChar(1))tmpText+=peak(1);
 	if(tmpText.length()==2&&opts.count(tmpText)){
-		return Token(opts[tmpText],nowLine,nowColomn,tmpText);
+		return Token(opts[tmpText],nowLine,nowColumn,tmpText);
 	}
 	if(tmpText.length()==2)tmpText.pop_back();
 	if(tmpText.length()==1&&opts.count(tmpText)){
-		return Token(opts[tmpText],nowLine,nowColomn,tmpText);
-	}else return Token(TokenType::Unknown,nowLine,nowColomn,tmpText);
+		return Token(opts[tmpText],nowLine,nowColumn,tmpText);
+	}else return Token(TokenType::Unknown,nowLine,nowColumn,tmpText);
 }
 
 Token Lexer::scanKeyword(){
@@ -265,13 +267,13 @@ Token Lexer::scanKeyword(){
 		tmpText+=peak(i);
 		if(endChar(i+1))break;
 		if(keywords.count(tmpText)){
-			return Token(keywords[tmpText],nowLine,nowColomn,tmpText);
+			return Token(keywords[tmpText],nowLine,nowColumn,tmpText);
 		}
 	}
 	if(keywords.count(tmpText)){
-		return Token(keywords[tmpText],nowLine,nowColomn,tmpText);
+		return Token(keywords[tmpText],nowLine,nowColumn,tmpText);
 	}
-	return Token(TokenType::Unknown,nowLine,nowColomn);
+	return Token(TokenType::Unknown,nowLine,nowColumn);
 }
 
 Token Lexer::getNextToken(){

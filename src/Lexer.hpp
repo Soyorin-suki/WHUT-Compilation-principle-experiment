@@ -9,7 +9,7 @@ class Lexer{
 private:
 	std::string text;
 	std::vector<Token>tokens;
-	int nowLine,nowColomn;
+	int nowLine,nowColumn;
 	size_t nowPos;
 	std::unordered_map<std::string,TokenType>keywords;
 	std::unordered_map<std::string,TokenType>opts;
