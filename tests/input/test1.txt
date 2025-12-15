@@ -1,7 +1,7 @@
 
 int main(void){
 	int x;
-	double db;
-	cout<<"Hello world";
+	char c;
+	x = 10;
 	return 0;
 }

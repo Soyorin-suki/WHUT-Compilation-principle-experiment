@@ -10,14 +10,39 @@
 <kw_int, int>
 <Identifier, x>
 <Semicolon, ;>
-<kw_double, double>
-<Identifier, db>
+<kw_char, char>
+<Identifier, c>
 <Semicolon, ;>
-<Identifier, cout>
-<LeftShift, <<>
-<StringLiterial, "Hello world">
+<Identifier, x>
+<Assign, =>
+<IntLiterial, 10>
 <Semicolon, ;>
 <kw_return, return>
 <IntLiterial, 0>
 <Semicolon, ;>
 <RBrace, }>
+<EndOfFile, >
+解析成功！
+抽象语法树如下：
+Program
+  FunDecl int main
+    params:
+      (none)
+    body:
+      Compound
+        locals:
+          VarDecl int x
+            init:
+              (empty)
+          VarDecl char c
+            init:
+              (empty)
+        statements:
+          ExprStmt
+            expr:
+              Assign
+                Var x
+                Int 10
+          Return
+            expr:
+              Int 0

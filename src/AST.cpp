@@ -1,4 +1,12 @@
 #include "AST.hpp"
+#include <sstream>
+
+std::string dumpAstToString(const Program &prog){
+	std::ostringstream oss;
+	prog.dump(oss,0);
+	return oss.str();
+}
+
 
 // Program
 void Program::dump(std::ostream &out, int indent) const {
@@ -98,12 +106,12 @@ void ExprStmt::dump(std::ostream &out,int indent)const {
 
 // IntLiteral
 void IntLiteral::dump(std::ostream &out,int indent)const {
-	out<<std::string(indent,' ')<<"Int "<<value<<'\n';
+	out<<std::string(indent,' ')<<"Int "<<lexeme<<'\n';
 }
 
 // CharLiteral
 void CharLiteral::dump(std::ostream &out,int indent)const {
-	out<<std::string(indent,' ')<<"Char '"<<value<<"'\n";
+	out<<std::string(indent,' ')<<"Char "<<lexeme<<'\n';
 }
 
 // ValExpr

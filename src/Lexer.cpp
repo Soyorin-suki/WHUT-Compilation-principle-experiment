@@ -18,6 +18,7 @@ Lexer::Lexer(){
 	keywords["long"]=TokenType::kw_long;
 
 	keywords["if"]=TokenType::kw_if;
+	keywords["else"]=TokenType::kw_else;
 	keywords["for"]=TokenType::kw_for;
 	keywords["while"]=TokenType::kw_while;
 	keywords["continue"]=TokenType::kw_continue;
@@ -302,4 +303,6 @@ void Lexer::doLexer(){
 		tokens.push_back(token);
 		skipSpace();
 	}
+	// Ìí¼Ó EOF token
+	tokens.push_back(Token(TokenType::Eof, nowLine, nowColumn,""));
 }

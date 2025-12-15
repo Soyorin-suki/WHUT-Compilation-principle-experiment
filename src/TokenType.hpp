@@ -13,6 +13,7 @@ enum class TokenType{
 	kw_long,		// long
 
 	kw_if,			// if
+	kw_else,		// else
 	kw_for,			// for
 	kw_while,		// while
 	kw_continue,	// continue

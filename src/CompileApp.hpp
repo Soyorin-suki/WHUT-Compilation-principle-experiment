@@ -3,6 +3,8 @@
 #include "Lexer.hpp"
 #include "Preprocessor.hpp"
 #include "AnalysisResult.hpp"
+#include "Parser.hpp"
+
 
 class CompileApp{
 	private:
@@ -10,6 +12,7 @@ class CompileApp{
 	Lexer lexer;
 	Preprocessor preprocessor;
 	AnalysisResult analysisResult;
+	Parser parser;
 
 	public:
 	void manu();

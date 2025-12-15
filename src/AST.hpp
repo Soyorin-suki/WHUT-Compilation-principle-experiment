@@ -2,7 +2,6 @@
 #include <memory>
 #include <ostream>
 #include "Token.hpp"
-#include "paster.hpp"
 #include <vector>
 
 // 类型枚举
@@ -16,6 +15,7 @@ inline std::string typeToString(Type t) {
     }
     return "unknown";
 }
+
 
 
 // AST节点基类
@@ -39,12 +39,19 @@ using StmtPtr = std::unique_ptr<Stmt>;
 struct Decl : ASTNode{};
 using DeclPtr = std::unique_ptr<Decl>;
 
+
+
 // 程序
 struct Program : ASTNode{
 	std::vector<DeclPtr>decls;
 	void dump(std::ostream &out, int indent) const override;
 };
 using ProgramPtr = std::unique_ptr<Program>;
+
+std::string dumpAstToString(const Program &prog);
+
+
+
 
 // 变量声明
 struct VarDecl : Decl{
@@ -115,13 +122,13 @@ struct ExprStmt : Stmt{
 
 // int字面量
 struct IntLiteral : Expr{
-	int value;
+	std::string lexeme;
 	void dump(std::ostream &out,int indent)const override;
 };
 
 // char字面量
 struct CharLiteral : Expr{
-	char value;
+	std::string lexeme;
 	void dump(std::ostream &out,int indent)const override;
 };
 

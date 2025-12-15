@@ -110,6 +110,9 @@ std::ostream& operator<<(std::ostream& os,const Token& token){
 			os<<"LeftShift";break;
 		case TokenType::RightShift:
 			os<<"RightShift";break;
+
+		case TokenType::Eof:
+			os<<"EndOfFile";break;
 	}
 	os<<", "<<token.lexeme<<">";
 	return os;
@@ -218,6 +221,9 @@ std::string Token::to_string()const{
 			s+="LeftShift";break;
 		case TokenType::RightShift:
 			s+="RightShift";break;
+
+		case TokenType::Eof:
+			s+="EndOfFile";break;
 	}
 	s+=", ";
 	s+=this->lexeme;

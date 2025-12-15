@@ -18,6 +18,19 @@ void CompileApp::start(){
 		ioManager.write("\n分析成功\n");
 	}
 	ioManager.write(LexerResult);
+	ProgramPtr ast;
+	try{
+		parser.setTokens(lexer.getTokens());
+		ast=parser.parse();
+	}catch(const std::exception &e){
+		ioManager.write(std::string("解析错误：")+e.what()+"\n");
+		return;	
+	}
+	ioManager.write("解析成功！\n");
+	ioManager.write("抽象语法树如下：\n");
+	std::string astStr=dumpAstToString(*ast);
+	ioManager.write(astStr);
+	
 
 
 
