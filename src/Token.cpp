@@ -114,3 +114,114 @@ std::ostream& operator<<(std::ostream& os,const Token& token){
 	os<<", "<<token.lexeme<<">";
 	return os;
 }
+
+std::string Token::to_string()const{
+	std::string s;
+	s+="<";
+	switch(this->type){
+		case TokenType::Unknown:
+			s+="Unknown";break;
+		case TokenType::Identifier:
+			s+="Identifier";break;
+
+		case TokenType::kw_void:
+			s+="kw_void";break;
+		case TokenType::kw_int:
+			s+="kw_int";break;
+		case TokenType::kw_char:
+			s+="kw_char";break;
+		case TokenType::kw_float:
+			s+="kw_float";break;
+		case TokenType::kw_double:
+			s+="kw_double";break;
+		case TokenType::kw_long:
+			s+="kw_long";break;
+
+		case TokenType::kw_if:
+			s+="kw_if";break;
+		case TokenType::kw_for:
+			s+="kw_for";break;
+		case TokenType::kw_while:
+			s+="kw_while";break;
+		case TokenType::kw_continue:
+			s+="kw_continue";break;
+		case TokenType::kw_break:
+			s+="kw_break";break;
+		case TokenType::kw_return:
+			s+="kw_return";break;
+
+		case TokenType::IntLiterial:
+			s+="IntLiterial";break;
+		case TokenType::DoubleLiterial:
+			s+="DoubleLiterial";break;
+		case TokenType::StringLiterial:
+			s+="StringLiterial";break;
+		case TokenType::CharLiterial:
+			s+="CharLiterial";break;
+
+		case TokenType::Semicolon:
+			s+="Semicolon";break;
+		case TokenType::Comma:
+			s+="Comma";break;
+		case TokenType::LParen:
+			s+="LParen";break;
+		case TokenType::RParen:
+			s+="RParen";break;
+		case TokenType::LBrace:
+			s+="LBrace";break;
+		case TokenType::RBrace:
+			s+="RBrace";break;
+		case TokenType::LBracket:
+			s+="LBracket";break;
+		case TokenType::RBracket:
+			s+="RBracket";break;
+
+		case TokenType::Plus:
+			s+="Plus";break;
+		case TokenType::Minus:
+			s+="Minus";break;
+		case TokenType::Star:
+			s+="Star";break;
+		case TokenType::Slash:
+			s+="Slash";break;
+		case TokenType::Percent:
+			s+="Percent";break;
+		case TokenType::Assign:
+			s+="Assign";break;
+		case TokenType::Equal:
+			s+="Equal";break;
+		case TokenType::NotEq:
+			s+="NotEq";break;
+		case TokenType::Less:
+			s+="Less";break;
+		case TokenType::Greater:
+			s+="Greater";break;
+		case TokenType::LessEq:
+			s+="LessEq";break;
+		case TokenType::GreaterEq:
+			s+="GreaterEq";break;
+		case TokenType::PlusPlus:
+			s+="PlusPlus";break;
+		case TokenType::MinusMinus:
+			s+="MinusMinus";break;
+		case TokenType::PlusEq:
+			s+="PlusEq";break;
+		case TokenType::MinusEq:
+			s+="MinusEq";break;
+		case TokenType::StarEq:
+			s+="StarEq";break;
+		case TokenType::SlashEq:
+			s+="SlashEq";break;
+		case TokenType::PercentEq:
+			s+="PercentEq";break;
+		case TokenType::LeftShift:
+			s+="LeftShift";break;
+		case TokenType::RightShift:
+			s+="RightShift";break;
+	}
+	s+=", ";
+	s+=this->lexeme;
+	s+=">";
+	return s;
+}
+
