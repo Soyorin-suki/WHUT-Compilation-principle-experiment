@@ -119,6 +119,10 @@ void ValExpr::dump(std::ostream &out,int indent)const {
 	out<<std::string(indent,' ')<<"Var "<<name<<'\n';
 }
 
+void DoubleLiteral::dump(std::ostream &out,int indent)const {
+	out<<std::string(indent,' ')<<"Double "<<lexeme<<'\n';
+}
+
 // AssignExpr
 void AssignExpr::dump(std::ostream &out,int indent)const {
 	out<<std::string(indent,' ')<<"Assign\n";

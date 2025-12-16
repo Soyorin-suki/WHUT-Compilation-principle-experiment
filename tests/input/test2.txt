@@ -1,0 +1,4 @@
+int main(void){
+	double db=1.2;
+	return 0;
+}

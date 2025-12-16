@@ -23,6 +23,7 @@ class Parser{
 
 	// 递归下降解析函数
 	// 处理程序
+	// useless now
 	ProgramPtr parseProgram();
 	// 处理声明
 	DeclPtr parseDecl();

@@ -5,15 +5,16 @@
 #include <vector>
 
 // 类型枚举
-enum class Type { INT, CHAR, VOID };
+enum class Type { INT, CHAR, VOID, DOUBLE };
 
 inline std::string typeToString(Type t) {
     switch(t) {
         case Type::INT: return "int";
         case Type::CHAR: return "char";
         case Type::VOID: return "void";
+		case Type::DOUBLE: return "double";
+		default: return "unknown";
     }
-    return "unknown";
 }
 
 
@@ -128,6 +129,12 @@ struct IntLiteral : Expr{
 
 // char字面量
 struct CharLiteral : Expr{
+	std::string lexeme;
+	void dump(std::ostream &out,int indent)const override;
+};
+
+// double字面量
+struct DoubleLiteral : Expr{
 	std::string lexeme;
 	void dump(std::ostream &out,int indent)const override;
 };

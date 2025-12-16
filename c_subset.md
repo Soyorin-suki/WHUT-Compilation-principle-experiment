@@ -1,6 +1,6 @@
 采用的 C 语言子集概述：
 
-- 支持基本类型：`int`、`char`、`void`（用于函数返回类型）。
+- 支持基本类型：`int`、`char`、`void`（用于函数返回类型）、`double`
 - 支持变量声明（可初始化）、函数定义、`if`/`else`、`while`、`for`、`return`。
 - 支持算术（`+ - * / %`）和逻辑运算（`&& || !`），以及比较运算符。
 
@@ -62,6 +62,7 @@ primary_expression ::= IDENT | INT_LITERAL | CHAR_LITERAL | "(" expr ")"
 IDENT       /* 标识符 */
 INT_LITERAL /* 十进制整数字面量 */
 CHAR_LITERAL/* 字符字面量 */
+DOUBLE_LITERAL /* 双精度浮点数字面量 */
 EOF         /* 输入结束 */
 ```
 

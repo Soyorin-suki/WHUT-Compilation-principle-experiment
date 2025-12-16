@@ -1,0 +1,11 @@
+int x=3;
+
+void main(void){
+	double db=1.2;
+	if(db<1.5){
+		return 1;
+	}else{
+		return 0;
+	}
+	return 0;
+}

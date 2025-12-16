@@ -81,7 +81,10 @@ DeclPtr Parser::parseDecl() {
 	} else if (check(TokenType::kw_void)) {
 		type = Type::VOID;
 		advance();
-	} else {
+	} else if(check(TokenType::kw_double)){
+		type = Type::DOUBLE;
+		advance();
+	}else {
 		throw std::runtime_error("Parser: expected type specifier at line"+std::to_string(curToken().line)+", column "+std::to_string(curToken().column));
 	}
 
@@ -147,6 +150,7 @@ DeclPtr Parser::parseFunDecl(Type returnType, const std::string &name) {
 			if (check(TokenType::kw_int)) { ptype = Type::INT; advance(); }
 			else if (check(TokenType::kw_char)) { ptype = Type::CHAR; advance(); }
 			else if (check(TokenType::kw_void)) { ptype = Type::VOID; advance(); }
+			else if (check(TokenType::kw_double)) { ptype = Type::DOUBLE; advance(); }
 			else throw std::runtime_error("Parser: expected parameter type at line "+std::to_string(curToken().line)+", column "+std::to_string(curToken().column));
 
 			if (!check(TokenType::Identifier)) throw std::runtime_error("Parser: expected parameter name at line "+std::to_string(curToken().line)+", column "+std::to_string(curToken().column));
@@ -231,11 +235,12 @@ std::unique_ptr<CompoundStmt> Parser::parseCompoundStmt() {
 
 	while (!check(TokenType::RBrace)) {
 		// 尝试解析局部变量声明或语句
-		if (check(TokenType::kw_int) || check(TokenType::kw_char) || check(TokenType::kw_void)) {
+		if (check(TokenType::kw_int) || check(TokenType::kw_char) || check(TokenType::kw_void)||check(TokenType::kw_double)) {
 			// 解析局部变量声明（只支持单个声明形式： type ident [= expr] ; ）
 			Type vtype;
 			if (check(TokenType::kw_int)) { vtype = Type::INT; advance(); }
 			else if (check(TokenType::kw_char)) { vtype = Type::CHAR; advance(); }
+			else if (check(TokenType::kw_double)) { vtype = Type::DOUBLE; advance(); }
 			else { vtype = Type::VOID; advance(); }
 
 			if (!check(TokenType::Identifier)) throw std::runtime_error("Parser: expected identifier in local declaration at line "+std::to_string(curToken().line)+", column "+std::to_string(curToken().column));
@@ -358,7 +363,12 @@ ExprPtr Parser::parsePrimaryExpr() {
 		charLit->lexeme = curToken().lexeme;
 		advance();
 		return charLit;
-	} else if (check(TokenType::Identifier)) {
+	} else if (check(TokenType::DoubleLiterial)) {
+		auto doubleLit = std::make_unique<DoubleLiteral>();
+		doubleLit->lexeme = curToken().lexeme;
+		advance();
+		return doubleLit;
+	}else if (check(TokenType::Identifier)) {
 		std::string name = curToken().lexeme;
 		advance();
 		if (check(TokenType::LParen)) {
