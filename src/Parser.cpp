@@ -280,13 +280,29 @@ ExprPtr Parser::parseAssignmentExpr() {
 }
 
 ExprPtr Parser::parseLogicalOrExpr() {
-	// 目前 TokenType 中未定义 ||/&&，所以直接降级到 logical and
-	return parseLogicalAndExpr();
+	auto left = parseLogicalAndExpr();
+	while (check(TokenType::LogicalOr)) {
+		auto binExpr = std::make_unique<BinaryExpr>();
+		binExpr->op = curToken().lexeme;
+		advance();
+		binExpr->left = std::move(left);
+		binExpr->right = parseLogicalAndExpr();
+		left = std::move(binExpr);
+	}
+	return left;
 }
 
 ExprPtr Parser::parseLogicalAndExpr() {
-	// 目前 TokenType 中未定义 &&，直接降级到 equality
-	return parseEqualityExpr();
+	auto left = parseEqualityExpr();
+	while (check(TokenType::LogicalAnd)) {
+		auto binExpr = std::make_unique<BinaryExpr>();
+		binExpr->op = curToken().lexeme;
+		advance();
+		binExpr->left = std::move(left);
+		binExpr->right = parseEqualityExpr();
+		left = std::move(binExpr);
+	}
+	return left;
 }
 
 ExprPtr Parser::parseEqualityExpr() {
@@ -342,7 +358,7 @@ ExprPtr Parser::parseMultiplicativeExpr() {
 }
 
 ExprPtr Parser::parseUnaryExpr() {
-	if (check(TokenType::Plus) || check(TokenType::Minus) || check(TokenType::Star)) {
+	if (check(TokenType::Plus) || check(TokenType::Minus) || check(TokenType::Star) || check(TokenType::Not)) {
 		auto unaryExpr = std::make_unique<UnaryExpr>();
 		unaryExpr->op = curToken().lexeme;
 		advance();

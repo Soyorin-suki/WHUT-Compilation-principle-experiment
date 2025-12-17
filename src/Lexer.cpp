@@ -36,6 +36,8 @@ Lexer::Lexer(){
 	opts["<="]=TokenType::LessEq;
 	opts[">="]=TokenType::GreaterEq;
 	opts["=="]=TokenType::Equal;
+	opts["||"]=TokenType::LogicalOr;
+	opts["&&"]=TokenType::LogicalAnd;
 	opts[";"]=TokenType::Semicolon;
 	opts[","]=TokenType::Comma;
 	opts["("]=TokenType::LParen;
@@ -50,6 +52,7 @@ Lexer::Lexer(){
 	opts["-"]=TokenType::Minus;
 	opts["*"]=TokenType::Star;
 	opts["/"]=TokenType::Slash;
+	opts["!"]=TokenType::Not;
 	opts["="]=TokenType::Assign;
 	opts["%"]=TokenType::Percent;
 	opts["<<"]=TokenType::LeftShift;

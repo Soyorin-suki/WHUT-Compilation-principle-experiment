@@ -56,6 +56,9 @@ enum class TokenType{
 
 	LeftShift,		// <<
 	RightShift,		// >>
+	LogicalOr,		// ||
+	LogicalAnd,		// &&
+	Not,			// !
 
 	Eof				// EOF
 
