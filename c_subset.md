@@ -1,92 +1,68 @@
-采用的 C 语言子集概述：
+基于当前实现的 C 子集说明
 
-- 支持基本类型：`int`、`char`、`void`（用于函数返回类型）、`double`
-- 支持变量声明（可初始化）、函数定义、`if`/`else`、`while`、`for`、`return`。
-- 支持算术（`+ - * / %`）和逻辑运算（`&& || !`），以及比较运算符。
+- 类型：`int`、`char`、`void`、`double`。`float`/`long` 出现在词法关键字里，但语法不接受。
+- 声明：顶层和块内均支持 `type IDENT` 可选 `= expr`，单个变量一行，不支持一次声明多个。
+- 函数：`type IDENT ( params? ) compound`，参数类型同上；`(void)` 视为无参。形参也允许 `void`（与标准 C 不同）。
+- 语句：复合语句、`if/else`、`while`、`for`、`return`、表达式语句、局部变量声明。空语句（单独 `;`）当前不支持。
+- 表达式：右结合赋值；逻辑 `|| && !`；比较 `== != < > <= >=`；算术 `+ - * / %`；一元 `+ - * !`；括号；变量与函数调用；字面量 `int/char/double`。
+- 词法：支持上述关键字、分隔符、运算符，字符串被识别成 Token 但语法未使用。
 
-下面使用 BNF/递归形式给出文法：
+递归下降/优先级分层文法：
 
 ```
-program ::= decl program | EOF
+program          ::= decl program | EOF
 
-decl ::= val_decl | func_decl
+decl             ::= type_spec IDENT decl_tail
+decl_tail        ::= ";"                // 变量声明，无初始化
+                   | "=" expr ";"       // 变量声明，带初始化
+                   | "(" param_list_opt ")" compound_stmt   // 函数定义
 
-val_decl ::= type_spec IDENT init_opt ";"
-init_opt ::= "=" expr | ε
+param_list_opt   ::= param_list | ε
+param_list       ::= param { "," param }
+param            ::= type_spec IDENT
 
-func_decl ::= type_spec IDENT "(" param_list_opt ")" compound_stmt
-param_list_opt ::= param_list | ε
-param_list ::= param | param "," param_list
-param ::= type_spec IDENT
+type_spec        ::= "int" | "char" | "void" | "double"
 
-type_spec ::= "int" | "char" | "void"
+compound_stmt    ::= "{" { local_decl | stmt } "}"
+local_decl       ::= type_spec IDENT [ "=" expr ] ";"
 
-compound_stmt ::= "{" stmt_list "}"
-stmt_list ::= stmt stmt_list | ε
+stmt             ::= compound_stmt
+                   | if_stmt
+                   | while_stmt
+                   | for_stmt
+                   | return_stmt
+                   | expr ";"            // 不允许空表达式语句
 
-stmt ::= expr_stmt
-	| compound_stmt
-	| if_stmt
-	| while_stmt
-	| for_stmt
-	| return_stmt
-	| val_decl
+if_stmt          ::= "if" "(" expr ")" stmt [ "else" stmt ]
+while_stmt       ::= "while" "(" expr ")" stmt
+for_stmt         ::= "for" "(" expr_opt ";" expr_opt ";" expr_opt ")" stmt
+return_stmt      ::= "return" expr_opt ";"
 
-expr_stmt ::= expr_opt ";"
-expr_opt ::= expr | ε
+expr             ::= assignment_expr
+assignment_expr  ::= logical_or_expr
+                   | unary_expr "=" assignment_expr   // 右结合
 
-if_stmt ::= "if" "(" expr ")" stmt else_opt
-else_opt ::= "else" stmt | ε
+logical_or_expr  ::= logical_and_expr { "||" logical_and_expr }
+logical_and_expr ::= equality_expr { "&&" equality_expr }
+equality_expr    ::= relational_expr { ("==" | "!=") relational_expr }
+relational_expr  ::= additive_expr { ("<" | ">" | "<=" | ">=") additive_expr }
+additive_expr    ::= multiplicative_expr { ("+" | "-") multiplicative_expr }
+multiplicative_expr ::= unary_expr { ("*" | "/" | "%") unary_expr }
+unary_expr       ::= ("+" | "-" | "*" | "!") unary_expr
+                   | primary_expr
 
-while_stmt ::= "while" "(" expr ")" stmt
+primary_expr     ::= IDENT
+                   | IDENT "(" [ expr { "," expr } ] ")"   // 函数调用
+                   | INT_LITERAL
+                   | CHAR_LITERAL
+                   | DOUBLE_LITERAL
+                   | "(" expr ")"
 
-for_stmt ::= "for" "(" expr_opt ";" expr_opt ";" expr_opt ")" stmt
-
-return_stmt ::= "return" expr_opt ";"
-
-/* 表达式（带运算优先级） */
-expr ::= assignment_expression
-assignment_expression ::= logical_or_expression
-			   | unary_expression "=" assignment_expression
-
-logical_or_expression ::= logical_and_expression { "||" logical_and_expression }
-logical_and_expression ::= equality_expression { "&&" equality_expression }
-equality_expression ::= relational_expression { ("==" | "!=") relational_expression }
-relational_expression ::= additive_expression { ("<" | ">" | "<=" | ">=") additive_expression }
-additive_expression ::= multiplicative_expression { ("+" | "-") multiplicative_expression }
-multiplicative_expression ::= unary_expression { ("*" | "/" | "%") unary_expression }
-unary_expression ::= ("+" | "-" | "!") unary_expression | primary_expression
-primary_expression ::= IDENT | INT_LITERAL | CHAR_LITERAL | "(" expr ")"
-
-/* 终结符说明（由词法器产生） */
-IDENT       /* 标识符 */
-INT_LITERAL /* 十进制整数字面量 */
-CHAR_LITERAL/* 字符字面量 */
-DOUBLE_LITERAL /* 双精度浮点数字面量 */
-EOF         /* 输入结束 */
+expr_opt         ::= expr | ε   // 仅用于 for/return
 ```
 
-下文对文法中的每个主要非终结符作说明：
-
-- `program`：整个翻译单元的起点；由若干 `decl`（声明或定义）组成，最后以 `EOF` 结束。使用 `program ::= decl program | EOF` 表示任意个零或多个 `decl` 后跟 `EOF`。
-- `decl`：顶层声明，可能是变量声明（`val_decl`）或函数定义（`func_decl`）。
-- `val_decl`：变量声明，格式为 `type IDENT`，可选地带上初始化器（`=` 表达式），以分号结束。例如 `int x;` 或 `int x = 3;`。
-- `init_opt`：可选初始化部分，允许为空（`ε`）。
-- `func_decl`：函数定义，包括返回类型、函数名、参数列表（可选）及函数体（复合语句）。
-- `param_list_opt` / `param_list` / `param`：函数参数相关，允许无参或多个参数，每个参数为 `type IDENT`。
-- `type_spec`：类型说明符，当前子集只支持 `int`、`char`、`void`。
-- `compound_stmt`：复合语句（块），以 `{}` 包围，内部可包含声明和语句序列。
-- `stmt_list`：语句序列或空。
-- `stmt`：语句，可以是表达式语句、复合语句、分支、循环、返回或局部变量声明等。
-- `expr_stmt`：以分号结束的表达式语句；允许为空（即仅分号，表示空语句）。
-- `if_stmt` / `else_opt`：条件分支；`else` 分支是可选的。
-- `while_stmt`：`while` 循环。
-- `for_stmt`：C 风格 `for` 循环，三个子表达式都可省略（用作空表达式）。
-- `return_stmt`：返回语句，返回值表达式可选（`void` 情形或空返回）。
-- `expr` 及其子产生式：表达式层次，按运算符优先级从赋值到逻辑到比较再到加减乘除，最后是主表达式。
-- `primary_expression`：基本项，包含标识符、字面量或圆括号内的表达式。
-
-词法器（`Lexer`）需生成与上文终结符对应的 token（如 `IDENT`、`INT_LITERAL`、关键字 `int`/`if`/`return` 等、运算符和分隔符）。确保 `TokenType.hpp` 中的 token 名称与文法匹配。
-
-
--- 结束 --
+与实现的差异/注意事项：
+- 本文法允许一元 `*`，实现同样接受（用作解引用/取值含义未定义，仅语法上通过）。
+- 局部声明接受 `void`，与标准 C 不一致。
+- 空语句 `;` 不会被解析成合法语句。
+- 字符串字面量被词法器识别，但语法未使用。
