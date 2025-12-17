@@ -3,7 +3,7 @@ void fun(int a){
 }
 int main(void){
 	int a=4;
-	while(a--){
+	while(a){
 		fun(a);
 	}
 	return 0;

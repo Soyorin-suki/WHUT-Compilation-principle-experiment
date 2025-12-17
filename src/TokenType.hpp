@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 enum class TokenType{
 	Unknown,		//Î´Öª£¬Ê¶±ðÊ§°Ü
@@ -63,3 +64,6 @@ enum class TokenType{
 	Eof				// EOF
 
 };
+
+std::string tokenTypeToString(TokenType type);
+

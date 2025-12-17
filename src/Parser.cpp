@@ -38,9 +38,9 @@ bool Parser::check(TokenType t) {
 void Parser::expect(TokenType t) {
 	if (!check(t)) {
 		std::string msg = "Parser: expected token type ";
-		msg += std::to_string(static_cast<int>(t));
+		msg += tokenTypeToString(t);
 		msg += " but got ";
-		msg += std::to_string(static_cast<int>(curToken().type));
+		msg += tokenTypeToString(curToken().type);
 		msg += " at line " + std::to_string(curToken().line) + ", column " + std::to_string(curToken().column);
 		throw std::runtime_error(msg);
 	}
