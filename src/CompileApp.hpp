@@ -4,6 +4,8 @@
 #include "Preprocessor.hpp"
 #include "AnalysisResult.hpp"
 #include "Parser.hpp"
+#include "SemanticAnalyzer.hpp"
+#include "TACGenerator.hpp"
 
 
 class CompileApp{
@@ -13,6 +15,8 @@ class CompileApp{
 	Preprocessor preprocessor;
 	AnalysisResult analysisResult;
 	Parser parser;
+	SemanticAnalyzer semanticAnalyzer;
+	TACGenerator tacGenerator;
 
 	public:
 	void manu();

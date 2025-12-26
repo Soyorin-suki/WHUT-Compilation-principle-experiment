@@ -1,8 +1,8 @@
 int x=3;
 
-void main(void){
+int main(void){
 	double db=1.2;
-	if(db<1.5){
+	if(db<x){
 		return 1;
 	}else{
 		return 0;

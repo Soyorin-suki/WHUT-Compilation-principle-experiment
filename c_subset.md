@@ -10,55 +10,94 @@
 递归下降/优先级分层文法：
 
 ```
-program          ::= decl program | EOF
+# ========= Program / Decl =========
+program        ::= decl_list EOF
+decl_list       ::= decl decl_list | ε
 
-decl             ::= type_spec IDENT decl_tail
-decl_tail        ::= ";"                // 变量声明，无初始化
-                   | "=" expr ";"       // 变量声明，带初始化
-                   | "(" param_list_opt ")" compound_stmt   // 函数定义
+decl            ::= type_spec IDENT decl_tail
+decl_tail       ::= ";" 
+                 | "=" expr ";" 
+                 | "(" param_clause compound_stmt
 
-param_list_opt   ::= param_list | ε
-param_list       ::= param { "," param }
-param            ::= type_spec IDENT
+# 说明：把右括号并入 param_clause，便于用 1 个 lookahead 决定参数分支
+param_clause    ::= ")" 
+                 | "void" param_clause_after_void
+                 | type_spec_nonvoid IDENT param_list_tail ")"
 
-type_spec        ::= "int" | "char" | "void" | "double"
+param_clause_after_void ::= ")"
+                         | IDENT param_list_tail ")"
 
-compound_stmt    ::= "{" { local_decl | stmt } "}"
-local_decl       ::= type_spec IDENT [ "=" expr ] ";"
+param_list_tail ::= "," param param_list_tail | ε
+param           ::= type_spec IDENT
 
-stmt             ::= compound_stmt
-                   | if_stmt
-                   | while_stmt
-                   | for_stmt
-                   | return_stmt
-                   | expr ";"            // 不允许空表达式语句
+type_spec       ::= "int" | "char" | "void" | "double"
+type_spec_nonvoid ::= "int" | "char" | "double"
 
-if_stmt          ::= "if" "(" expr ")" stmt [ "else" stmt ]
-while_stmt       ::= "while" "(" expr ")" stmt
-for_stmt         ::= "for" "(" expr_opt ";" expr_opt ";" expr_opt ")" stmt
-return_stmt      ::= "return" expr_opt ";"
+# ========= Compound / Local Decl =========
+compound_stmt   ::= "{" compound_items "}"
+compound_items  ::= compound_item compound_items | ε
+compound_item   ::= local_decl | stmt
 
-expr             ::= assignment_expr
-assignment_expr  ::= logical_or_expr
-                   | unary_expr "=" assignment_expr   // 右结合
+local_decl      ::= type_spec IDENT local_init_opt ";"
+local_init_opt  ::= "=" expr | ε
 
-logical_or_expr  ::= logical_and_expr { "||" logical_and_expr }
-logical_and_expr ::= equality_expr { "&&" equality_expr }
-equality_expr    ::= relational_expr { ("==" | "!=") relational_expr }
-relational_expr  ::= additive_expr { ("<" | ">" | "<=" | ">=") additive_expr }
-additive_expr    ::= multiplicative_expr { ("+" | "-") multiplicative_expr }
-multiplicative_expr ::= unary_expr { ("*" | "/" | "%") unary_expr }
-unary_expr       ::= ("+" | "-" | "*" | "!") unary_expr
-                   | primary_expr
+# ========= Stmt (dangling-else resolved) =========
+stmt            ::= matched_stmt | unmatched_stmt | other_stmt
 
-primary_expr     ::= IDENT
-                   | IDENT "(" [ expr { "," expr } ] ")"   // 函数调用
-                   | INT_LITERAL
-                   | CHAR_LITERAL
-                   | DOUBLE_LITERAL
-                   | "(" expr ")"
+matched_stmt    ::= "if" "(" expr ")" matched_stmt "else" matched_stmt
+                 | other_stmt
 
-expr_opt         ::= expr | ε   // 仅用于 for/return
+unmatched_stmt  ::= "if" "(" expr ")" stmt
+                 | "if" "(" expr ")" matched_stmt "else" unmatched_stmt
+
+other_stmt      ::= compound_stmt
+                 | while_stmt
+                 | for_stmt
+                 | return_stmt
+                 | expr ";"
+
+while_stmt      ::= "while" "(" expr ")" stmt
+for_stmt        ::= "for" "(" expr_opt ";" expr_opt ";" expr_opt ")" stmt
+return_stmt     ::= "return" expr_opt ";"
+expr_opt        ::= expr | ε
+
+# ========= Expr (LL(1)-friendly) =========
+expr            ::= assignment_expr
+
+# 说明：这样做 LL(1) 没问题；“左边必须是左值”留到语义分析检查
+assignment_expr ::= logical_or_expr assignment_tail
+assignment_tail ::= "=" assignment_expr | ε
+
+logical_or_expr ::= logical_and_expr logical_or_tail
+logical_or_tail ::= "||" logical_and_expr logical_or_tail | ε
+
+logical_and_expr ::= equality_expr logical_and_tail
+logical_and_tail ::= "&&" equality_expr logical_and_tail | ε
+
+equality_expr   ::= relational_expr equality_tail
+equality_tail   ::= ("==" | "!=") relational_expr equality_tail | ε
+
+relational_expr ::= additive_expr relational_tail
+relational_tail ::= ("<" | ">" | "<=" | ">=") additive_expr relational_tail | ε
+
+additive_expr   ::= multiplicative_expr additive_tail
+additive_tail   ::= ("+" | "-") multiplicative_expr additive_tail | ε
+
+multiplicative_expr ::= unary_expr multiplicative_tail
+multiplicative_tail ::= ("*" | "/" | "%") unary_expr multiplicative_tail | ε
+
+unary_expr      ::= unary_op unary_expr | primary_expr
+unary_op        ::= "+" | "-" | "*" | "!"
+
+primary_expr    ::= IDENT primary_suffix
+                 | INT_LITERAL
+                 | CHAR_LITERAL
+                 | DOUBLE_LITERAL
+                 | "(" expr ")"
+
+primary_suffix  ::= "(" arg_list_opt ")" | ε
+arg_list_opt    ::= expr arg_list_tail | ε
+arg_list_tail   ::= "," expr arg_list_tail | ε
 ```
 
 与实现的差异/注意事项：

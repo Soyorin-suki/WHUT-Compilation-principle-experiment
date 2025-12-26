@@ -30,6 +30,23 @@ void CompileApp::start(){
 	ioManager.write("抽象语法树如下：\n");
 	std::string astStr=dumpAstToString(*ast);
 	ioManager.write(astStr);
+
+	try{
+		semanticAnalyzer.analyze(*ast);
+		ioManager.write("语义分析成功！\n");
+	}catch(const std::exception &e){
+		ioManager.write(std::string("语义分析错误：")+e.what()+"\n");
+		return;
+	}
+
+	try{
+		std::string tac = tacGenerator.generate(*ast);
+		ioManager.write("三地址码如下：\n");
+		ioManager.write(tac);
+	}catch(const std::exception &e){
+		ioManager.write(std::string("三地址码生成错误：")+e.what()+"\n");
+		return;
+	}
 	
 
 

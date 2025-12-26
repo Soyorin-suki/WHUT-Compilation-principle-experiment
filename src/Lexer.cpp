@@ -306,6 +306,6 @@ void Lexer::doLexer(){
 		tokens.push_back(token);
 		skipSpace();
 	}
-	// Ìí¼Ó EOF token
+	//  EOF token
 	tokens.push_back(Token(TokenType::Eof, nowLine, nowColumn,""));
 }
