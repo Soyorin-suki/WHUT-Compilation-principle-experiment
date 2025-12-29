@@ -1,0 +1,13 @@
+int main(void){
+	int x=1;
+	int y=2;
+	int z=3;
+	if(y<=z&&(z<=x||y>=x)){
+		z=z+x;
+	}else{
+		y=y+x;
+	}
+
+
+	return 0;
+}

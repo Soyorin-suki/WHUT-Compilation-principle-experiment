@@ -10,7 +10,6 @@ void Parser::setTokens(const std::vector<Token>& toks) {
 	pos = 0;
 }
 
-// ¸¨Öúº¯ÊýÊµÏÖ
 Token& Parser::curToken() {
 	if (pos >= tokens.size()) {
 		throw std::out_of_range("Parser: curToken() position out of range");
@@ -149,7 +148,6 @@ DeclPtr Parser::parseFunDecl(Type returnType, const std::string &name) {
 			Type ptype;
 			if (check(TokenType::kw_int)) { ptype = Type::INT; advance(); }
 			else if (check(TokenType::kw_char)) { ptype = Type::CHAR; advance(); }
-			else if (check(TokenType::kw_void)) { ptype = Type::VOID; advance(); }
 			else if (check(TokenType::kw_double)) { ptype = Type::DOUBLE; advance(); }
 			else throw std::runtime_error("Parser: expected parameter type at line "+std::to_string(curToken().line)+", column "+std::to_string(curToken().column));
 
