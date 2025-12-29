@@ -18,18 +18,32 @@ void CompileApp::start(){
 		ioManager.write("\n分析成功\n");
 	}
 	ioManager.write(LexerResult);
+
+	// 表驱动 LL(1) 预测分析（仅用于展示分析过程与验证）
+	try {
+		auto ll1 = ll1TableParser.parseAndTrace(lexer.getTokens());
+		ioManager.write("\nLL(1)表驱动预测分析过程如下：\n");
+		ioManager.write(ll1.trace);
+		if (!ll1.success) {
+			ioManager.write(std::string("\nLL(1)表驱动解析错误：") + ll1.error + "\n");
+			return;
+		}
+		ioManager.write("\nLL(1)表驱动解析成功！\n");
+	} catch (const std::exception& e) {
+		ioManager.write(std::string("LL(1)表驱动解析器内部错误：") + e.what() + "\n");
+		return;
+	}
+
 	ProgramPtr ast;
 	try{
 		parser.setTokens(lexer.getTokens());
 		ast=parser.parse();
 	}catch(const std::exception &e){
-		ioManager.write(std::string("解析错误：")+e.what()+"\n");
+		ioManager.write(std::string("内部AST构造失败：")+e.what()+"\n");
 		return;	
 	}
-	ioManager.write("解析成功！\n");
-	ioManager.write("抽象语法树如下：\n");
-	std::string astStr=dumpAstToString(*ast);
-	ioManager.write(astStr);
+	// 不输出 AST，不重复打印解析成功信息
+	// 为了复用现有语义分析与三地址码生成，内部仍构造 AST，但不要求展示
 
 	try{
 		semanticAnalyzer.analyze(*ast);

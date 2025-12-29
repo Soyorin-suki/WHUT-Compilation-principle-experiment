@@ -6,6 +6,7 @@
 #include "Parser.hpp"
 #include "SemanticAnalyzer.hpp"
 #include "TACGenerator.hpp"
+#include "LL1TableParser.hpp"
 
 
 class CompileApp{
@@ -15,6 +16,7 @@ class CompileApp{
 	Preprocessor preprocessor;
 	AnalysisResult analysisResult;
 	Parser parser;
+	LL1TableParser ll1TableParser;
 	SemanticAnalyzer semanticAnalyzer;
 	TACGenerator tacGenerator;
 
