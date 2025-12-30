@@ -586,14 +586,20 @@ std::string LL1TableParser::tokenShort(const Token& tok) {
 std::string LL1TableParser::stackToString(const std::vector<Sym>& st) {
 	std::ostringstream ss;
 	ss << "[";
-	// print top->bottom for readability
-	for (size_t i = 0; i < st.size(); i++) {
-		const auto& s = st[st.size() - 1 - i];
-		if (i) ss << " ";
-		ss << symToString(s);
-		if (i >= 12 && st.size() > 16) {
-			ss << " ...";
-			break;
+	// print bottom->top; if too long, keep only the top part
+	constexpr size_t kMaxKeep = 12;
+	constexpr size_t kNoTruncThreshold = 16;
+
+	if (st.size() > kNoTruncThreshold) {
+		ss << "...";
+		const size_t start = st.size() > kMaxKeep ? (st.size() - kMaxKeep) : 0;
+		for (size_t i = start; i < st.size(); i++) {
+			ss << " " << symToString(st[i]);
+		}
+	} else {
+		for (size_t i = 0; i < st.size(); i++) {
+			if (i) ss << " ";
+			ss << symToString(st[i]);
 		}
 	}
 	ss << "]";

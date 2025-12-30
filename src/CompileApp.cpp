@@ -42,8 +42,6 @@ void CompileApp::start(){
 		ioManager.write(std::string("内部AST构造失败：")+e.what()+"\n");
 		return;	
 	}
-	// 不输出 AST，不重复打印解析成功信息
-	// 为了复用现有语义分析与三地址码生成，内部仍构造 AST，但不要求展示
 
 	try{
 		semanticAnalyzer.analyze(*ast);
